@@ -1,0 +1,10 @@
+{
+    "name": "reprovinci/solr-php-client",
+    "description": "A PHP library for indexing and searching documents within an Apache Solr installation.",
+    "authors": [
+        {
+            "name": "Donovan Jiménez",
+            "email": "donovan.jimenez@gmail.com"
+        }
+    ]
+}
