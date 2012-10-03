@@ -9,7 +9,13 @@
     "authors": [
         {
             "name": "Donovan Jiménez",
-            "email": "donovan.jimenez@gmail.com"
+            "email": "donovan.jimenez@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Reinier Kip",
+            "email": "github@reinierkip.nl",
+            "role": "Developer"
         }
     ]
 }
