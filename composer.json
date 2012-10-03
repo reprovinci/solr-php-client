@@ -3,7 +3,7 @@
     "description": "A PHP library for indexing and searching documents within an Apache Solr installation.",
     "autoload": {
         "psr-0": {
-            "Apache\\Solr\\": ""
+            "Apache_Solr_": ""
         }
     },
     "authors": [
