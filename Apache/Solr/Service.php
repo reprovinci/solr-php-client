@@ -183,6 +183,11 @@ class Apache_Solr_Service
 	protected $_httpTransport = false;
 
 	/**
+	 * @var Apache_Solr_Compatibility_CompatibilityLayer
+	 */
+	protected $_compatibilityLayer;
+
+	/**
 	 * Escape a value for special query characters such as ':', '(', ')', '*', '?', etc.
 	 *
 	 * NOTE: inside a phrase fewer characters need escaped, use {@link Apache_Solr_Service::escapePhrase()} instead
@@ -233,8 +238,13 @@ class Apache_Solr_Service
 	 * @param string $path
 	 * @param Apache_Solr_HttpTransport_Interface $httpTransport
 	 */
-	public function __construct($host = 'localhost', $port = 8180, $path = '/solr/', $httpTransport = false)
-	{
+	public function __construct(
+		$host = 'localhost',
+		$port = 8180,
+		$path = '/solr/',
+		$httpTransport = false,
+		$compatibilityLayer = false
+	) {
 		$this->setHost($host);
 		$this->setPort($port);
 		$this->setPath($path);
@@ -244,6 +254,22 @@ class Apache_Solr_Service
 		if ($httpTransport)
 		{
 			$this->setHttpTransport($httpTransport);
+		}
+
+		if ($compatibilityLayer !== false)
+		{
+			if ($compatibilityLayer instanceof Apache_Solr_Compatibility_CompatibilityLayer)
+			{
+				$this->setCompatibilityLayer($compatibilityLayer);
+			}
+			else
+			{
+				throw new Apache_Solr_InvalidArgumentException("Given compatibility layer doesn't implement Apache_Solr_Compatibility_CompatibilityLayer");
+			}
+		}
+		else
+		{
+			$this->setCompatibilityLayer(new Apache_Solr_Compatibility_Solr3CompatibilityLayer);
 		}
 
 		// check that our php version is >= 5.1.3 so we can correct for http_build_query behavior later
@@ -501,6 +527,22 @@ class Apache_Solr_Service
 	public function setHttpTransport(Apache_Solr_HttpTransport_Interface $httpTransport)
 	{
 		$this->_httpTransport = $httpTransport;
+	}
+
+	/**
+	 * @return Apache_Solr_Compatibility_CompatibilityLayer
+	 */
+	public function getCompatibilityLayer()
+	{
+		return $this->_compatibilityLayer;
+	}
+	
+	/**
+	 * @param Apache_Solr_Compatibility_CompatibilityLayer $compatibilityLayer
+	 */
+	public function setCompatibilityLayer($compatibilityLayer)
+	{
+		$this->_compatibilityLayer = $compatibilityLayer;
 	}
 
 	/**
@@ -852,11 +894,12 @@ class Apache_Solr_Service
 	 */
 	public function commit($expungeDeletes = false, $waitFlush = true, $waitSearcher = true, $timeout = 3600)
 	{
-		$expungeValue = $expungeDeletes ? 'true' : 'false';
-		$flushValue = $waitFlush ? 'true' : 'false';
-		$searcherValue = $waitSearcher ? 'true' : 'false';
-
-		$rawPost = '<commit expungeDeletes="' . $expungeValue . '" waitFlush="' . $flushValue . '" waitSearcher="' . $searcherValue . '" />';
+		$rawPost = $this->getCompatibilityLayer()->createCommitXml(
+			$expungeDeletes,
+			$waitFlush,
+			$waitSearcher,
+			$timeout
+		);
 
 		return $this->_sendRawPost($this->_updateUrl, $rawPost, $timeout);
 	}
@@ -1148,10 +1191,11 @@ class Apache_Solr_Service
 	 */
 	public function optimize($waitFlush = true, $waitSearcher = true, $timeout = 3600)
 	{
-		$flushValue = $waitFlush ? 'true' : 'false';
-		$searcherValue = $waitSearcher ? 'true' : 'false';
-
-		$rawPost = '<optimize waitFlush="' . $flushValue . '" waitSearcher="' . $searcherValue . '" />';
+		$rawPost = $this->getCompatibilityLayer()->createOptimizeXml(
+			$waitFlush,
+			$waitSearcher,
+			$timeout
+		);
 
 		return $this->_sendRawPost($this->_updateUrl, $rawPost, $timeout);
 	}
