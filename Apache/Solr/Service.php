@@ -888,20 +888,38 @@ class Apache_Solr_Service
 	 * @param boolean $waitFlush Defaults to true,  block until index changes are flushed to disk
 	 * @param boolean $waitSearcher Defaults to true, block until a new searcher is opened and registered as the main query searcher, making the changes visible
 	 * @param float $timeout Maximum expected duration (in seconds) of the commit operation on the server (otherwise, will throw a communication exception). Defaults to 1 hour
+	 * @param boolean $softCommit Whether to perform a soft commit instead of a hard commit.
 	 * @return Apache_Solr_Response
 	 *
 	 * @throws Apache_Solr_HttpTransportException If an error occurs during the service call
 	 */
-	public function commit($expungeDeletes = false, $waitFlush = true, $waitSearcher = true, $timeout = 3600)
+	public function commit($expungeDeletes = false, $waitFlush = true, $waitSearcher = true, $timeout = 3600, $softCommit = false)
 	{
 		$rawPost = $this->getCompatibilityLayer()->createCommitXml(
 			$expungeDeletes,
 			$waitFlush,
 			$waitSearcher,
-			$timeout
+			$timeout,
+			$softCommit
 		);
 
 		return $this->_sendRawPost($this->_updateUrl, $rawPost, $timeout);
+	}
+
+	/**
+	 * Send a soft commit command. Will be synchronous unless both wait parameters are set to false.
+	 *
+	 * @param boolean $expungeDeletes Defaults to false, merge segments with deletes away
+	 * @param boolean $waitFlush Defaults to true,  block until index changes are flushed to disk
+	 * @param boolean $waitSearcher Defaults to true, block until a new searcher is opened and registered as the main query searcher, making the changes visible
+	 * @param float $timeout Maximum expected duration (in seconds) of the commit operation on the server (otherwise, will throw a communication exception). Defaults to 1 hour
+	 * @return Apache_Solr_Response
+	 *
+	 * @throws Apache_Solr_HttpTransportException If an error occurs during the service call
+	 */
+	public function softCommit($expungeDeletes = false, $waitFlush = true, $waitSearcher = true, $timeout = 3600)
+	{
+		return $this->commit($expungeDeletes, $waitFlush, $waitSearcher, $timeout, true);
 	}
 
 	/**
