@@ -5,3 +5,4 @@ php:
 before_script:
     - composer install --dev
 script: bin/phpunit tests
+script: php vendor/phpunit/phpunit/composer/bin/phpunit tests
