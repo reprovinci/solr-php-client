@@ -18,6 +18,7 @@ set_include_path(
 	// current include path (for PHPUnit, etc.)
 	get_include_path()
 );
+print "\nInclude path: ".get_include_path()."\n\n";
 
 // set up an autoload for Zend / Pear style class loading
 spl_autoload_register(
