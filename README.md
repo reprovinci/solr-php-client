@@ -1,4 +1,7 @@
 # Apache Solr PHP client
+![Build status of reprovinci/solr-php-client](https://travis-ci.org/reprovinci/solr-php-client.png "Build status of reprovinci/solr-php-client")
+
+
 A PHP library for indexing and searching documents within an [Apache Solr](http://lucene.apache.org/solr/) installation.
 
 This client library was originally hosted on Google Code: http://groups.google.com/group/php-solr-client  
