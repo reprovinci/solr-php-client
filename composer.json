@@ -1,11 +1,6 @@
 {
     "name": "reprovinci/solr-php-client",
     "description": "A PHP library for indexing and searching documents within an Apache Solr installation.",
-    "autoload": {
-        "psr-0": {
-            "Apache_Solr_": ""
-        }
-    },
     "authors": [
         {
             "name": "Donovan Jiménez",
@@ -17,5 +12,16 @@
             "email": "github@reinierkip.nl",
             "role": "Developer"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-0": {
+            "Apache_Solr_": ["", "tests"]
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+    "config": {
+        "bin-dir": "bin/"
+    }
 }
