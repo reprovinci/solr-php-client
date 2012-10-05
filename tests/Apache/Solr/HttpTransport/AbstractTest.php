@@ -43,19 +43,19 @@ abstract class Apache_Solr_HttpTransport_AbstractTest extends PHPUnit_Framework_
 	const TIMEOUT = 2;
 	
 	// request our copyright file from googlecode for GET and HEAD
-	const GET_URL = "http://solr-php-client.googlecode.com/svn/trunk/COPYING";
-	const GET_RESPONSE_MIME_TYPE = 'text/plain';
+	const GET_URL = "http://reinierkip.nl/echo/";
+	const GET_RESPONSE_MIME_TYPE = 'application/json';
 	const GET_RESPONSE_ENCODING = 'UTF-8';
-	const GET_RESPONSE_MATCH = 'Copyright (c) ';
+	const GET_RESPONSE_MATCH = '{"method":"GET"}';
 	
 	// post to the issue list page with a search for 'meh'
-	const POST_URL = "http://code.google.com/p/solr-php-client/issues/list";
-	const POST_DATA = "can=2&q=meh&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary&cells=tiles";
+	const POST_URL = "http://reinierkip.nl/echo/";
+	const POST_DATA = "ok=true";
 	const POST_REQUEST_CONTENT_TYPE = 'application/x-www-form-urlencoded; charset=UTF-8';
 	
-	const POST_RESPONSE_MIME_TYPE = 'text/html';
+	const POST_RESPONSE_MIME_TYPE = 'application/json';
 	const POST_RESPONSE_ENCODING = 'UTF-8';
-	//const POST_RESPONSE_MATCH = 'not sure';
+	const POST_RESPONSE_MATCH = '{"method":"POST","data":{"ok":"true"}}';
 	
 	abstract public function getFixture();
 	
@@ -163,7 +163,7 @@ abstract class Apache_Solr_HttpTransport_AbstractTest extends PHPUnit_Framework_
 		$this->assertEquals(200, $response->getStatusCode(), 'Status code was not 200');
 		$this->assertEquals(self::POST_RESPONSE_MIME_TYPE, $response->getMimeType(), 'mimetype was not correct');
 		$this->assertEquals(self::POST_RESPONSE_ENCODING, $response->getEncoding(), 'character encoding was not correct');
-		//$this->assertStringStartsWith(self::POST_RESPONSE_MATCH, $response->getBody(), 'body did not start with match text');
+		$this->assertStringStartsWith(self::POST_RESPONSE_MATCH, $response->getBody(), 'body did not start with match text');
 	}
 	
 	public function testPerformPostRequestWithTimeout()
@@ -176,7 +176,7 @@ abstract class Apache_Solr_HttpTransport_AbstractTest extends PHPUnit_Framework_
 		$this->assertEquals(200, $response->getStatusCode(), 'Status code was not 200');
 		$this->assertEquals(self::POST_RESPONSE_MIME_TYPE, $response->getMimeType(), 'mimetype was not correct');
 		$this->assertEquals(self::POST_RESPONSE_ENCODING, $response->getEncoding(), 'character encoding was not correct');
-		//$this->assertStringStartsWith(self::POST_RESPONSE_MATCH, $response->getBody(), 'body did not start with match text');
+		$this->assertStringStartsWith(self::POST_RESPONSE_MATCH, $response->getBody(), 'body did not start with match text');
 	}
 		
 	/**
