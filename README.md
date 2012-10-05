@@ -13,7 +13,7 @@ Before that, it was hosted in Solr's issue tracker: https://issues.apache.org/ji
   and many more features. It runs in a Java servlet container such as Tomcat.
 > For more information about Solr, please see the [Solr Web Page](http://lucene.apache.org/solr/). The
   project's [Wiki](http://wiki.apache.org/solr/) is the de facto starting point for information on how
-  to install and configure Solr for your individual needs
+  to install and configure Solr for your individual needs.
 
 ## Features
  * Quering, deleting, optimizing.
@@ -34,6 +34,21 @@ Just `require` `reprovinci/solr-php-client`:
     "reprovinci/solr-php-client": "1.0.x"
   }
 }
+```
+
+## Testing
+The code is automatically tested by [Travis](travis-ci.org/reprovinci/solr-php-client) after each push.
+Travis currently reports the following build status:
+[![Build Status](https://travis-ci.org/reprovinci/solr-php-client.png)](https://travis-ci.org/reprovinci/solr-php-client).
+
+If you want to test the code yourself, follow the following instructions:
+
+### Composer (PHP 5 >= 5.3.0)
+Just install dev dependencies and run PHPUnit:
+
+```sh
+composer install --dev
+bin/phpunit tests
 ```
 
 ## Further Information
