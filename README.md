@@ -4,7 +4,7 @@
 A PHP library for indexing and searching documents within an [Apache Solr](http://lucene.apache.org/solr/)
 installation.
 
-This client library was originally hosted on Google Code: http://groups.google.com/group/php-solr-client  
+This client library was forked from Donovan Jiménez' Google Code project: http://groups.google.com/group/php-solr-client  
 Before that, it was hosted in Solr's issue tracker: https://issues.apache.org/jira/browse/SOLR-341
 
 ## What is Apache Solr?
