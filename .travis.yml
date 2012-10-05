@@ -4,3 +4,5 @@ php:
     - 5.3
     - 5.4
 script: phpunit --verbose -c tests/phpunit.xml tests
+notifications:
+    email: false
