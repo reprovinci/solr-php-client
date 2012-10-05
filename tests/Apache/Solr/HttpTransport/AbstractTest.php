@@ -40,7 +40,7 @@
  */
 abstract class Apache_Solr_HttpTransport_AbstractTest extends PHPUnit_Framework_TestCase
 {	
-	const TIMEOUT = 2;
+	const TIMEOUT = 10;
 	
 	// request our copyright file from googlecode for GET and HEAD
 	const GET_URL = "http://reinierkip.nl/echo/";
