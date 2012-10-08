@@ -36,9 +36,6 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
-// Require Apache_Solr_HttpTransport_Abstract
-require_once(dirname(__FILE__) . '/Abstract.php');
-
 /**
  * HTTP Transport implemenation that uses the builtin http URL wrappers and file_get_contents
  */

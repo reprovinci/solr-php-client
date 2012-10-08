@@ -36,9 +36,6 @@
  * @author Timo Schmidt <timo.schmidt@aoemedia.de>, Donovan Jimenez <djimenez@conduit-it.com>
  */
 
-// Require Apache_Solr_HttpTransport_Abstract
-require_once(dirname(__FILE__) . '/Abstract.php');
-
 /**
  * An alternative Curl HTTP transport that opens and closes a curl session for
  * every request. This isn't the recommended way to use curl, but some version of

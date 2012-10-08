@@ -36,17 +36,6 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>
  */
 
-// See Issue #1 (http://code.google.com/p/solr-php-client/issues/detail?id=1)
-// Doesn't follow typical include path conventions, but is more convenient for users
-require_once(dirname(__FILE__) . '/Exception.php');
-require_once(dirname(__FILE__) . '/HttpTransportException.php');
-require_once(dirname(__FILE__) . '/InvalidArgumentException.php');
-
-require_once(dirname(__FILE__) . '/Document.php');
-require_once(dirname(__FILE__) . '/Response.php');
-
-require_once(dirname(__FILE__) . '/HttpTransport/Interface.php');
-
 /**
  * Starting point for the Solr API. Represents a Solr server resource and has
  * methods for pinging, adding, deleting, committing, optimizing and searching.
@@ -511,8 +500,6 @@ class Apache_Solr_Service
 		// lazy load a default if one has not be set
 		if ($this->_httpTransport === false)
 		{
-			require_once(dirname(__FILE__) . '/HttpTransport/FileGetContents.php');
-
 			$this->_httpTransport = new Apache_Solr_HttpTransport_FileGetContents();
 		}
 

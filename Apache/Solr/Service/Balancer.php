@@ -36,12 +36,6 @@
  * @author Donovan Jimenez <djimenez@conduit-it.com>, Dan Wolfe
  */
 
-// See Issue #1 (http://code.google.com/p/solr-php-client/issues/detail?id=1)
-// Doesn't follow typical include path conventions, but is more convenient for users
-require_once(dirname(dirname(__FILE__)) . '/Service.php');
-
-require_once(dirname(dirname(__FILE__)) . '/NoServiceAvailableException.php');
-
 /**
  * Reference Implementation for using multiple Solr services in a distribution. Functionality
  * includes:
