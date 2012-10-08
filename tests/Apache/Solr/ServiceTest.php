@@ -103,6 +103,45 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$this->assertEquals($newTransport, $httpTransport);
 	}
 
+	public function testGetCompatibilityLayerWithDefaultConstructor()
+	{
+		$fixture = new Apache_Solr_Service();
+		
+		$layer = $fixture->getCompatibilityLayer();
+		
+		$this->assertInstanceOf('Apache_Solr_Compatibility_CompatibilityLayer', $layer, 'Default compatibility does not implement interface');
+		$this->assertInstanceOf('Apache_Solr_Compatibility_Solr3CompatibilityLayer', $layer, 'Default compatibility is not URL Wrapper implementation');
+	}
+	
+	
+	public function testSetCompatibilityLayer()
+	{
+		$newLayer = new Apache_Solr_Compatibility_Solr3CompatibilityLayer();
+		$fixture = new Apache_Solr_Service();
+		
+		$fixture->setCompatibilityLayer($newLayer);
+		$layer = $fixture->getCompatibilityLayer();
+		
+		$this->assertInstanceOf('Apache_Solr_Compatibility_CompatibilityLayer', $layer);
+		$this->assertInstanceOf('Apache_Solr_Compatibility_Solr3CompatibilityLayer', $layer);
+		$this->assertEquals($newLayer, $layer);
+		
+	}
+	
+	public function testSetCompatibilityLayerWithConstructor()
+	{
+		$newLayer = new Apache_Solr_Compatibility_Solr4CompatibilityLayer();
+		
+		$fixture = new Apache_Solr_Service('localhost', 8180, '/solr/', false, $newLayer);
+		
+		$fixture->setCompatibilityLayer($newLayer);
+		$layer = $fixture->getCompatibilityLayer();
+		
+		$this->assertInstanceOf('Apache_Solr_Compatibility_CompatibilityLayer', $layer);
+		$this->assertInstanceOf('Apache_Solr_Compatibility_Solr4CompatibilityLayer', $layer);
+		$this->assertEquals($newLayer, $layer);
+	}
+
 	public function testGetCollapseSingleValueArraysWithDefaultConstructor()
 	{
 		$fixture = $this->getFixture();
