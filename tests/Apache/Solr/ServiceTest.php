@@ -77,21 +77,21 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 	
 	public function testSetHttpTransport()
 	{
-		$newTransport = new Apache_Solr_HttpTransport_Curl();
+		$newTransport = new Apache_Solr_HttpTransport_FileGetContents();
 		$fixture = new Apache_Solr_Service();
 		
 		$fixture->setHttpTransport($newTransport);
 		$httpTransport = $fixture->getHttpTransport();
 		
 		$this->assertInstanceOf('Apache_Solr_HttpTransport_Interface', $httpTransport);
-		$this->assertInstanceOf('Apache_Solr_HttpTransport_Curl', $httpTransport);
+		$this->assertInstanceOf('Apache_Solr_HttpTransport_FileGetContents', $httpTransport);
 		$this->assertEquals($newTransport, $httpTransport);
 		
 	}
 	
 	public function testSetHttpTransportWithConstructor()
 	{
-		$newTransport = new Apache_Solr_HttpTransport_Curl();
+		$newTransport = new Apache_Solr_HttpTransport_FileGetContents();
 		
 		$fixture = new Apache_Solr_Service('localhost', 8180, '/solr/', $newTransport);
 		
@@ -99,7 +99,7 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$httpTransport = $fixture->getHttpTransport();
 		
 		$this->assertInstanceOf('Apache_Solr_HttpTransport_Interface', $httpTransport);
-		$this->assertInstanceOf('Apache_Solr_HttpTransport_Curl', $httpTransport);
+		$this->assertInstanceOf('Apache_Solr_HttpTransport_FileGetContents', $httpTransport);
 		$this->assertEquals($newTransport, $httpTransport);
 	}
 
