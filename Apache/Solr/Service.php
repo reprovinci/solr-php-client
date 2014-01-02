@@ -107,7 +107,7 @@ class Apache_Solr_Service
 	const PING_SERVLET = 'admin/ping';
 	const UPDATE_SERVLET = 'update';
 	const SEARCH_SERVLET = 'select';
-	const SYSTEM_SERVLET = 'admin/system';
+	const SYSTEM_SERVLET = 'admin/info/system';
 	const THREADS_SERVLET = 'admin/threads';
 	const EXTRACT_SERVLET = 'update/extract';
 
