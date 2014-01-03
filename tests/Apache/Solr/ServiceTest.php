@@ -411,7 +411,7 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 	
 	public function testSystem()
 	{
-		$expectedUrl = "http://localhost:8180/solr/admin/system?wt=json";
+		$expectedUrl = "http://localhost:8180/solr/admin/info/system?wt=json";
 		$expectedTimeout = false;
 		
 		// set a mock transport
@@ -428,13 +428,33 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->setHttpTransport($mockTransport);
 		$fixture->system();
 	}
+
+	public function testCore()
+	{
+		$expectedUrl = "http://localhost:8180/solr/admin/cores?wt=json";
+		$expectedTimeout = false;
+		
+		// set a mock transport
+		$mockTransport = $this->getMockHttpTransportInterface();
+		
+		// setup expected call and response
+		$mockTransport->expects($this->once())
+			->method('performGetRequest')
+			->with($this->equalTo($expectedUrl), $this->equalTo($expectedTimeout))
+			->will($this->returnValue(Apache_Solr_HttpTransport_ResponseTest::get200Response()));
+		
+		// call system
+		$fixture = new Apache_Solr_service();
+		$fixture->setHttpTransport($mockTransport);
+		$fixture->cores();
+	}
 	
 	/**
 	 * @expectedException Apache_Solr_HttpTransportException
 	 */
 	public function testSystem404()
 	{
-		$expectedUrl = "http://localhost:8180/solr/admin/system?wt=json";
+		$expectedUrl = "http://localhost:8180/solr/admin/info/system?wt=json";
 		$expectedTimeout = false;
 		
 		// set a mock transport
