@@ -776,7 +776,7 @@ class Apache_Solr_Service
 		{
 			if ($document instanceof Apache_Solr_Document)
 			{
-				$rawDocuments = $this->_documentToXmlFragment($document);
+				$rawDocuments .= $this->_documentToXmlFragment($document);
 			}
 		}
 
