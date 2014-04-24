@@ -51,6 +51,10 @@ composer install --dev
 bin/phpunit tests
 ```
 
+## Credits
+
+ * Thanks to [@GZyl](https://github.com/GZyl) for fixing ``<add>`` compatibility between Solr versions. [#7](https://github.com/reprovinci/solr-php-client/issues/7)
+
 ## Further Information
 Please see [Frequently Asked Questions](http://code.google.com/p/solr-php-client/wiki/FAQ)
 
