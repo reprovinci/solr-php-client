@@ -679,6 +679,51 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 		$fixture->addDocument($document);
 	}
 
+	public function testAddMultipleDocumentsWithSolr4()
+	{
+		// set a mock transport
+		$mockTransport = $this->getMockHttpTransportInterface();
+
+		// setup expected call and response
+		$mockTransport->expects($this->once())
+			->method('performPostRequest')
+			->with(
+			// url
+				$this->equalTo('http://localhost:8180/solr/update?wt=json'),
+
+				// raw post
+				$this->equalTo('<add overwrite="true"><doc><field name="guid">global unique id</field><field name="field">value</field><field name="multivalue">value 1</field><field name="multivalue">value 2</field></doc><doc><field name="guid">global unique id2</field><field name="field">value2</field><field name="multivalue">value 2</field><field name="multivalue">value 3</field></doc></add>'),
+
+				// content type
+				$this->equalTo('text/xml; charset=UTF-8'),
+
+				// timeout
+				$this->equalTo(false)
+			)
+			->will($this->returnValue(Apache_Solr_HttpTransport_ResponseTest::get200Response()));
+
+		$fixture = new Apache_Solr_service();
+		$fixture->setHttpTransport($mockTransport);
+		$fixture->setCompatibilityLayer(new Apache_Solr_Compatibility_Solr4CompatibilityLayer());
+
+		$document0 = new Apache_Solr_Document();
+		$document0->guid = "global unique id";
+		$document0->field = "value";
+		$document0->multivalue = array("value 1", "value 2");
+
+		$document1 = new Apache_Solr_Document();
+		$document1->guid = "global unique id2";
+		$document1->field = "value2";
+		$document1->multivalue = array("value 2", "value 3");
+
+		$fixture->addDocuments(
+			array(
+				$document0,
+				$document1
+			)
+		);
+	}
+
 	public function testAddDocumentWithFieldBoost()
 	{
 		// set a mock transport
