@@ -744,18 +744,15 @@ class Apache_Solr_Service
 	 */
 	public function addDocument(Apache_Solr_Document $document, $allowDups = false, $overwritePending = true, $overwriteCommitted = true, $commitWithin = 0)
 	{
-		$dupValue = $allowDups ? 'true' : 'false';
-		$pendingValue = $overwritePending ? 'true' : 'false';
-		$committedValue = $overwriteCommitted ? 'true' : 'false';
-		
-		$commitWithin = (int) $commitWithin;
-		$commitWithinString = $commitWithin > 0 ? " commitWithin=\"{$commitWithin}\"" : '';
-		
-		$rawPost = "<add allowDups=\"{$dupValue}\" overwritePending=\"{$pendingValue}\" overwriteCommitted=\"{$committedValue}\"{$commitWithinString}>";
-		$rawPost .= $this->_documentToXmlFragment($document);
-		$rawPost .= '</add>';
+		$documentXmlFragment = $this->_documentToXmlFragment($document);
 
-		return $this->add($rawPost);
+		return $this->addRawDocuments(
+			$documentXmlFragment,
+			$allowDups,
+			$overwritePending,
+			$overwriteCommitted,
+			$commitWithin
+		);
 	}
 
 	/**
@@ -772,6 +769,40 @@ class Apache_Solr_Service
 	 */
 	public function addDocuments($documents, $allowDups = false, $overwritePending = true, $overwriteCommitted = true, $commitWithin = 0)
 	{
+		$documentsXmlFragment = '';
+
+		foreach ($documents as $document)
+		{
+			if ($document instanceof Apache_Solr_Document)
+			{
+				$documentsXmlFragment .= $this->_documentToXmlFragment($document);
+			}
+		}
+
+		return $this->addRawDocuments(
+			$documentsXmlFragment,
+			$allowDups,
+			$overwritePending,
+			$overwriteCommitted,
+			$commitWithin
+		);
+	}
+
+	/**
+	 * @param $documentsXmlFragment
+	 * @param $allowDups
+	 * @param $overwritePending
+	 * @param $overwriteCommitted
+	 * @param $commitWithin
+	 * @return Apache_Solr_Response
+	 */
+	private function addRawDocuments(
+		$documentsXmlFragment,
+		$allowDups,
+		$overwritePending,
+		$overwriteCommitted,
+		$commitWithin
+	) {
 		$dupValue = $allowDups ? 'true' : 'false';
 		$pendingValue = $overwritePending ? 'true' : 'false';
 		$committedValue = $overwriteCommitted ? 'true' : 'false';
@@ -779,17 +810,22 @@ class Apache_Solr_Service
 		$commitWithin = (int) $commitWithin;
 		$commitWithinString = $commitWithin > 0 ? " commitWithin=\"{$commitWithin}\"" : '';
 
-		$rawPost = "<add allowDups=\"{$dupValue}\" overwritePending=\"{$pendingValue}\" overwriteCommitted=\"{$committedValue}\"{$commitWithinString}>";
+		$compatibilityLayer = $this->getCompatibilityLayer();
 
-		foreach ($documents as $document)
-		{
-			if ($document instanceof Apache_Solr_Document)
-			{
-				$rawPost .= $this->_documentToXmlFragment($document);
-			}
+		if ($compatibilityLayer instanceof Apache_Solr_Compatibility_AddDocumentXmlCreator) {
+			$rawPost = $compatibilityLayer->createAddDocumentXmlFragment(
+				$documentsXmlFragment,
+				$allowDups,
+				$overwritePending,
+				$overwriteCommitted,
+				$commitWithin
+			);
+		} else {
+			$rawPost = "<add allowDups=\"{$dupValue}\" overwritePending=\"{$pendingValue}\" "
+				. "overwriteCommitted=\"{$committedValue}\"{$commitWithinString}>";
+			$rawPost .= $documentsXmlFragment;
+			$rawPost .= '</add>';
 		}
-
-		$rawPost .= '</add>';
 
 		return $this->add($rawPost);
 	}
