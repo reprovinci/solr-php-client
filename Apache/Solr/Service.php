@@ -107,7 +107,8 @@ class Apache_Solr_Service
 	const PING_SERVLET = 'admin/ping';
 	const UPDATE_SERVLET = 'update';
 	const SEARCH_SERVLET = 'select';
-	const SYSTEM_SERVLET = 'admin/system';
+	const SYSTEM_SERVLET = 'admin/info/system';
+	const CORE_SERVLET = 'admin/cores';
 	const THREADS_SERVLET = 'admin/threads';
 	const EXTRACT_SERVLET = 'update/extract';
 
@@ -155,7 +156,7 @@ class Apache_Solr_Service
 	 *
 	 * @var string
 	 */
-	protected $_pingUrl, $_updateUrl, $_searchUrl, $_systemUrl, $_threadsUrl;
+	protected $_pingUrl, $_updateUrl, $_searchUrl, $_systemUrl, $_threadsUrl, $_coresUrl;
 
 	/**
 	 * Keep track of whether our URLs have been constructed
@@ -303,6 +304,7 @@ class Apache_Solr_Service
 		$this->_pingUrl = $this->_constructUrl(self::PING_SERVLET);
 		$this->_searchUrl = $this->_constructUrl(self::SEARCH_SERVLET);
 		$this->_systemUrl = $this->_constructUrl(self::SYSTEM_SERVLET, array('wt' => self::SOLR_WRITER));
+		$this->_coresUrl = $this->_constructUrl(self::CORE_SERVLET, array('wt' => self::SOLR_WRITER));
 		$this->_threadsUrl = $this->_constructUrl(self::THREADS_SERVLET, array('wt' => self::SOLR_WRITER ));
 		$this->_updateUrl = $this->_constructUrl(self::UPDATE_SERVLET, array('wt' => self::SOLR_WRITER ));
 
@@ -692,7 +694,7 @@ class Apache_Solr_Service
 	}
 	
 	/**
-	 * Call the /admin/system servlet and retrieve system information about Solr
+	 * Call the /admin/info/system servlet and retrieve system information about Solr
 	 * 
 	 * @return Apache_Solr_Response
 	 *
@@ -701,6 +703,19 @@ class Apache_Solr_Service
 	public function system()
 	{
 		return $this->_sendRawGet($this->_systemUrl);
+	}
+
+	/**
+	 * Call the /admin/cores servlet and retrieve CoreAdmin informations
+	 * @see http://wiki.apache.org/solr/CoreAdmin
+	 * 
+	 * @return Apache_Solr_Response
+	 *
+	 * @throws Apache_Solr_HttpTransportException If an error occurs during the service call
+	 */
+	public function cores()
+	{
+		return $this->_sendRawGet($this->_coresUrl);
 	}
 
 	/**
