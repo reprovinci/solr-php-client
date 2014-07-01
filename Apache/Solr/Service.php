@@ -243,6 +243,9 @@ class Apache_Solr_Service
 		$this->setPort($port);
 		$this->setPath($path);
 
+		// check if solr version is above 4.4 to set the new system servlet
+		$this->_systemServlet = version_compare($version, '4.4', '>=') ? self::SYSTEM_SERVLET : self::SYSTEM_SERVLET_OLD;
+
 		$this->_initUrls();
 
 		if ($httpTransport)
@@ -268,7 +271,6 @@ class Apache_Solr_Service
 
 		// check that our php version is >= 5.1.3 so we can correct for http_build_query behavior later
 		$this->_queryBracketsEscaped = version_compare(phpversion(), '5.1.3', '>=');
-		$this->_systemServlet = version_compare($version, '4.4', '>=') ? self::SYSTEM_SERVLET : self::SYSTEM_SERVLET_OLD;
 	}
 
 	/**

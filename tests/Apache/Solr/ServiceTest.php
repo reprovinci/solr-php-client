@@ -454,7 +454,7 @@ class Apache_Solr_ServiceTest extends Apache_Solr_ServiceAbstractTest
 	 */
 	public function testSystem404()
 	{
-		$expectedUrl = "http://localhost:8180/solr/admin/info/system?wt=json";
+		$expectedUrl = "http://localhost:8180/solr/admin/system?wt=json";
 		$expectedTimeout = false;
 
 		// set a mock transport
