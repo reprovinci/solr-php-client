@@ -107,9 +107,13 @@ class Apache_Solr_Service
 	const PING_SERVLET = 'admin/ping';
 	const UPDATE_SERVLET = 'update';
 	const SEARCH_SERVLET = 'select';
-	const SYSTEM_SERVLET = 'admin/system';
+	const SYSTEM_SERVLET_OLD = 'admin/system';
+	const SYSTEM_SERVLET = 'admin/info/system';
+	const CORE_SERVLET = 'admin/cores';
 	const THREADS_SERVLET = 'admin/threads';
 	const EXTRACT_SERVLET = 'update/extract';
+
+	protected $_systemServlet;
 
 	/**
 	 * Server identification strings
@@ -155,7 +159,7 @@ class Apache_Solr_Service
 	 *
 	 * @var string
 	 */
-	protected $_pingUrl, $_updateUrl, $_searchUrl, $_systemUrl, $_threadsUrl;
+	protected $_pingUrl, $_updateUrl, $_searchUrl, $_systemUrl, $_threadsUrl, $_coresUrl;
 
 	/**
 	 * Keep track of whether our URLs have been constructed
@@ -232,11 +236,15 @@ class Apache_Solr_Service
 		$port = 8180,
 		$path = '/solr/',
 		$httpTransport = false,
-		$compatibilityLayer = false
+		$compatibilityLayer = false,
+		$version = '4.0'
 	) {
 		$this->setHost($host);
 		$this->setPort($port);
 		$this->setPath($path);
+
+		// check if solr version is above 4.4 to set the new system servlet
+		$this->_systemServlet = version_compare($version, '4.4', '>=') ? self::SYSTEM_SERVLET : self::SYSTEM_SERVLET_OLD;
 
 		$this->_initUrls();
 
@@ -302,7 +310,8 @@ class Apache_Solr_Service
 		$this->_extractUrl = $this->_constructUrl(self::EXTRACT_SERVLET);
 		$this->_pingUrl = $this->_constructUrl(self::PING_SERVLET);
 		$this->_searchUrl = $this->_constructUrl(self::SEARCH_SERVLET);
-		$this->_systemUrl = $this->_constructUrl(self::SYSTEM_SERVLET, array('wt' => self::SOLR_WRITER));
+		$this->_systemUrl = $this->_constructUrl($this->_systemServlet, array('wt' => self::SOLR_WRITER));
+		$this->_coresUrl = $this->_constructUrl(self::CORE_SERVLET, array('wt' => self::SOLR_WRITER));
 		$this->_threadsUrl = $this->_constructUrl(self::THREADS_SERVLET, array('wt' => self::SOLR_WRITER ));
 		$this->_updateUrl = $this->_constructUrl(self::UPDATE_SERVLET, array('wt' => self::SOLR_WRITER ));
 
@@ -523,7 +532,7 @@ class Apache_Solr_Service
 	{
 		return $this->_compatibilityLayer;
 	}
-	
+
 	/**
 	 * @param Apache_Solr_Compatibility_CompatibilityLayer $compatibilityLayer
 	 */
@@ -597,10 +606,10 @@ class Apache_Solr_Service
 	{
 		$this->getHttpTransport()->setDefaultTimeout($timeout);
 	}
-	
+
 	/**
 	 * Convenience method to set authentication credentials on the current HTTP transport implementation
-	 * 
+	 *
 	 * @param string $username
 	 * @param string $password
 	 */
@@ -675,7 +684,7 @@ class Apache_Solr_Service
 	public function ping($timeout = 2)
 	{
 		$start = microtime(true);
-		
+
 		$httpTransport = $this->getHttpTransport();
 
 		$httpResponse = $httpTransport->performHeadRequest($this->_pingUrl, $timeout);
@@ -690,10 +699,10 @@ class Apache_Solr_Service
 			return false;
 		}
 	}
-	
+
 	/**
-	 * Call the /admin/system servlet and retrieve system information about Solr
-	 * 
+	 * Call the /admin/info/system servlet and retrieve system information about Solr
+	 *
 	 * @return Apache_Solr_Response
 	 *
 	 * @throws Apache_Solr_HttpTransportException If an error occurs during the service call
@@ -701,6 +710,19 @@ class Apache_Solr_Service
 	public function system()
 	{
 		return $this->_sendRawGet($this->_systemUrl);
+	}
+
+	/**
+	 * Call the /admin/cores servlet and retrieve CoreAdmin informations
+	 * @see http://wiki.apache.org/solr/CoreAdmin
+	 *
+	 * @return Apache_Solr_Response
+	 *
+	 * @throws Apache_Solr_HttpTransportException If an error occurs during the service call
+	 */
+	public function cores()
+	{
+		return $this->_sendRawGet($this->_coresUrl);
 	}
 
 	/**
@@ -1071,13 +1093,13 @@ class Apache_Solr_Service
 		{
 			$params = array();
 		}
-		
+
 		// if $file is an http request, defer to extractFromUrl instead
 		if (substr($file, 0, 7) == 'http://' || substr($file, 0, 8) == 'https://')
 		{
 			return $this->extractFromUrl($file, $params, $document, $mimetype);
 		}
-		
+
 		// read the contents of the file
 		$contents = @file_get_contents($file);
 
@@ -1097,7 +1119,7 @@ class Apache_Solr_Service
 			throw new Apache_Solr_InvalidArgumentException("File '{$file}' is empty or could not be read");
 		}
 	}
-	
+
 	/**
 	 * Use Solr Cell to extract document contents. See {@link http://wiki.apache.org/solr/ExtractingRequestHandler} for information on how
 	 * to use Solr Cell and what parameters are available.
@@ -1162,7 +1184,7 @@ class Apache_Solr_Service
 		// the file contents will be sent to SOLR as the POST BODY - we use application/octect-stream as default mimetype
 		return $this->_sendRawPost($this->_extractUrl . $this->_queryDelimiter . $queryString, $data, false, $mimetype);
 	}
-	
+
 	/**
 	 * Use Solr Cell to extract document contents. See {@link http://wiki.apache.org/solr/ExtractingRequestHandler} for information on how
 	 * to use Solr Cell and what parameters are available.
@@ -1197,10 +1219,10 @@ class Apache_Solr_Service
 		}
 
 		$httpTransport = $this->getHttpTransport();
-		
+
 		// read the contents of the URL using our configured Http Transport and default timeout
 		$httpResponse = $httpTransport->performGetRequest($url);
-		
+
 		// check that its a 200 response
 		if ($httpResponse->getStatusCode() == 200)
 		{
@@ -1269,7 +1291,7 @@ class Apache_Solr_Service
 		{
 			$params = array();
 		}
-		
+
 		// construct our full parameters
 
 		// common parameters in this interface
